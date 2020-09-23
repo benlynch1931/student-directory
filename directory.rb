@@ -11,7 +11,7 @@ def print_menu
   puts "1. Input the students"
   puts "2. Show the students"
   puts "3. Save the list to students.csv"
-  puts "4. Load the list from students.csv"
+  # puts "4. Load the list from students.csv"
   puts "9. Exit"
 end
 
@@ -23,8 +23,8 @@ def process(selection)
     show_students
   when "3"
     save_students
-  when "4"
-    load_students
+  # when "4"
+  #   load_students
   when "9"
     exit
   else
@@ -68,8 +68,8 @@ def show_students
 end
 
 def print_header
-  puts "The students of Villains Academy"
-  puts "--------------"
+  puts "The students of Villains Academy".center(70, "-")
+   puts "-" * 70
 end
 
 def print_students
@@ -99,6 +99,7 @@ def save_students
     end
   end
   file.close
+  puts "Students successfully saved!"
 end
 
 def load_students(filename = "students.csv")
@@ -108,11 +109,17 @@ def load_students(filename = "students.csv")
     students_to_array(name, cohort)
   end
   file.close
+  puts "Students successfully loaded!"
 end
 
 def try_load_students
   filename = ARGV.first # first argument from cmd
-  return if filename.nil? # get out of methon if it isn't given
+  # return if filename.nil? # get out of methon if it isn't given
+  if filename.nil?
+    puts "which file do you want to load?"
+    filename = STDIN.gets.chomp
+  end
+  return if filename == "none" || filename.nil?
   if File.exists?(filename) # if it exists
     load_students(filename)
     puts "Loaded #{@students.count} from #{filename}"
@@ -122,4 +129,5 @@ def try_load_students
   end
 end
 
+try_load_students
 interactive_menu
