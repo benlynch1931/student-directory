@@ -10,8 +10,8 @@ def print_menu
   # 1. print the menu and ask the user what to do
   puts "1. Input the students"
   puts "2. Show the students"
-  puts "3. Save the list to students.csv"
-  # puts "4. Load the list from students.csv"
+  puts "3. Save the list"
+  puts "4. Load the list"
   puts "9. Exit"
 end
 
@@ -23,8 +23,8 @@ def process(selection)
     show_students
   when "3"
     save_students
-  # when "4"
-  #   load_students
+  when "4"
+    load_students
   when "9"
     exit
   else
@@ -101,24 +101,50 @@ end
 
 def save_students
   if @given_file == false
-    puts "No file was loaded so cannot save to file"
-    puts "Unfortunately the program will quit now..."
-    exit
-  else
-    # open the file for writing
-    file = File.open("students.csv", "w")
-    # iterate over the array of students
-    @students.each do |student|
-      student_data = [student[:name], student[:cohort]]
-      csv_line = student_data.join(",")
-      file.puts csv_line
+    puts "No file was loaded so there is a chance for duplicate students"
+    puts "put 'exit' to quit, or type the filename to continue: "
+    option = STDIN.gets.chomp
+    if option == "exit"
+      exit
+    else
+      filename = option
     end
-    file.close
-    puts "Students successfully saved!"
+  else
+    filename = @filename
   end
+  # open the file for writing
+  file = File.open(filename, "w")
+  # iterate over the array of students
+  @students.each do |student|
+    student_data = [student[:name], student[:cohort]]
+    csv_line = student_data.join(",")
+    file.puts csv_line
+  end
+  file.close
+  puts "Students successfully saved!"
 end
 
-def load_students(filename = "students.csv")
+def load_students
+  if @given_file == false
+    puts "No file was given at startup. There is a chance for duplicate students."
+    puts "Do you wish to continue?"
+    continue = STDIN.gets.chomp
+    case continue
+    when "yes"
+      puts "Please enter the filename to load: "
+      filename = STDIN.gets.chomp
+    when "no"
+      puts "Back to the main menu..."
+      print_menu
+    when "exit"
+      exit
+    else
+      puts "That was not an option. Back to the main menu..."
+      print_menu
+    end
+  else
+    filename = @filename
+  end
   file = File.open(filename, "r")
   file.readlines.each do |line|
     name, cohort = line.chomp.split(',')
@@ -129,22 +155,23 @@ def load_students(filename = "students.csv")
 end
 
 def try_load_students
-  filename = ARGV.first # first argument from cmd
+  @filename = ARGV.first # first argument from cmd
   # return if filename.nil? # get out of methon if it isn't given
-  if filename.nil?
+  if @filename.nil?
     puts "which file do you want to load? (Type 'none' to not load a file)"
-    filename = STDIN.gets.chomp
+    @filename = STDIN.gets.chomp
   end
-  if filename == "none" || filename == nil
+  if @filename == "none" || @filename == nil
     @given_file = false
     return
   end
-  if File.exists?(filename) # if it exists
-    load_students(filename)
-    puts "Loaded #{@students.count} from #{filename}"
+  if File.exists?(@filename) # if it exists
+    load_students
+    puts "Loaded #{@students.count} from #{@filename}"
     @given_file = true
+    filename = @filename
   else # if it doesn't exist
-    puts "Sorry, #{filename} doesn't exist."
+    puts "Sorry, #{@filename} doesn't exist."
     exit # quit the program
   end
 end
