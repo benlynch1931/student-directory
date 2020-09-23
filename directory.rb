@@ -46,6 +46,19 @@ def input_students
     if cohort.empty?
       cohort = "TBC"
     end
+    @students.each do |student|
+      if student[:name] == name && student[:cohort] == cohort.to_sym
+        puts "This person already exists. Do you wish to continue?"
+        continue = STDIN.gets.chomp.downcase
+        case continue
+        when "yes"
+          break
+        else
+          puts "Sending you back to the main menu..."
+          print_menu
+        end
+      end
+    end
     students_to_array(name, cohort)
     if @students.count == 1
       puts "Now we have #{@students.count} student"
@@ -89,14 +102,11 @@ end
 def save_students
   # open the file for writing
   file = File.open("students.csv", "w")
-  file_read = File.open("students.csv", "r")
   # iterate over the array of students
   @students.each do |student|
     student_data = [student[:name], student[:cohort]]
     csv_line = student_data.join(",")
-    if !file_read.include? csv_line
-      file.puts csv_line
-    end
+    file.puts csv_line
   end
   file.close
   puts "Students successfully saved!"
