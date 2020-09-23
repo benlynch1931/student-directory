@@ -1,16 +1,3 @@
-# students = [
-#   {name: "Dr. Hannibal Lecter", cohort: :november},
-#   {name: "Darth Vader", cohort: :november},
-#   {name: "Nurse Ratched", cohort: :november},
-#   {name: "Michael Corleone", cohort: :november},
-#   {name: "Alex DeLarge", cohort: :november},
-#   {name: "The Wicked Witch of the West", cohort: :november},
-#   {name: "Terminator", cohort: :november},
-#   {name: "Freddy Krueger", cohort: :november},
-#   {name: "the Joker", cohort: :november},
-#   {name: "Joffrey Baratheon", cohort: :november},
-#   {name: "Norman Bates", cohort: :november}
-# ]
 @students = [] # an empty array accessible to all methods
 def interactive_menu
   loop do
@@ -49,18 +36,17 @@ def input_students
   puts "Please enter the names of the students"
   puts "To finish, just hit return twice"
   # get the first name
-  name = STDIN.gets.chomp
+  name = STDIN.gets.chomp.capitalize
   # while the name is not empty, repeat this code
   while !name.empty? do
     # get cohort
     puts "Enter cohort: "
-    cohort = STDIN.gets.chomp
+    cohort = STDIN.gets.chomp.capitalize
     # add the student hash to the array
-    if cohort == ""
-      @students << {name: name.capitalize, cohort: "TBC"}
-    else
-      @students << {name: name.capitalize, cohort: cohort.capitalize.to_sym}
+    if cohort.empty?
+      cohort = "TBC"
     end
+    students_to_array(name, cohort)
     if @students.count == 1
       puts "Now we have #{@students.count} student"
     else
@@ -69,6 +55,10 @@ def input_students
     # get another name from the user
     name = STDIN.gets.chomp
   end
+end
+
+def students_to_array(name, cohort = "TBC")
+  @students << {name: name, cohort: cohort.to_sym}
 end
 
 def show_students
@@ -115,7 +105,7 @@ def load_students(filename = "students.csv")
   file = File.open(filename, "r")
   file.readlines.each do |line|
     name, cohort = line.chomp.split(',')
-    @students << {name: name, cohort: cohort.to_sym}
+    students_to_array(name, cohort)
   end
   file.close
 end
