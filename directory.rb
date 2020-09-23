@@ -100,16 +100,22 @@ def print_footer
 end
 
 def save_students
-  # open the file for writing
-  file = File.open("students.csv", "w")
-  # iterate over the array of students
-  @students.each do |student|
-    student_data = [student[:name], student[:cohort]]
-    csv_line = student_data.join(",")
-    file.puts csv_line
+  if @given_file == false
+    puts "No file was loaded so cannot save to file"
+    puts "Unfortunately the program will quit now..."
+    exit
+  else
+    # open the file for writing
+    file = File.open("students.csv", "w")
+    # iterate over the array of students
+    @students.each do |student|
+      student_data = [student[:name], student[:cohort]]
+      csv_line = student_data.join(",")
+      file.puts csv_line
+    end
+    file.close
+    puts "Students successfully saved!"
   end
-  file.close
-  puts "Students successfully saved!"
 end
 
 def load_students(filename = "students.csv")
@@ -126,13 +132,17 @@ def try_load_students
   filename = ARGV.first # first argument from cmd
   # return if filename.nil? # get out of methon if it isn't given
   if filename.nil?
-    puts "which file do you want to load?"
+    puts "which file do you want to load? (Type 'none' to not load a file)"
     filename = STDIN.gets.chomp
   end
-  return if filename == "none" || filename.nil?
+  if filename == "none" || filename == nil
+    @given_file = false
+    return
+  end
   if File.exists?(filename) # if it exists
     load_students(filename)
     puts "Loaded #{@students.count} from #{filename}"
+    @given_file = true
   else # if it doesn't exist
     puts "Sorry, #{filename} doesn't exist."
     exit # quit the program
