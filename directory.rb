@@ -29,7 +29,7 @@ end
 def process(selection)
   case selection
   when "1"
-    @students = input_students
+    input_students
   when "2"
     show_students
   when "9"
@@ -56,14 +56,12 @@ def input_students
     # get another name from the user
     name = gets.chomp
   end
-  # return the array of students
-  return @students
 end
 
 def show_students
   print_header
-  print_students(@students)
-  print_footer(@students)
+  print_students
+  print_footer
 end
 
 def print_header
@@ -71,17 +69,17 @@ def print_header
   puts "--------------"
 end
 
-def print_students(students_list)
-  students_list.each do |student|
+def print_students
+  @students.each do |student|
     puts "#{student[:name]} (#{student[:cohort]} cohort)"
   end
 end
 
-def print_footer(names)
-  if names.count == 1
-    puts "Overall, we have #{names.count} great student"
+def print_footer
+  if @students.count == 1
+    puts "Overall, we have #{@students.count} great student"
   else
-    puts "Overall, we have #{names.count} great students"
+    puts "Overall, we have #{@students.count} great students"
   end
 end
 
